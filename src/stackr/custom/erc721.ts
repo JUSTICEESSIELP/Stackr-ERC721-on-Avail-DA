@@ -18,7 +18,7 @@ export type ERC721State = State<ERC721Storage>;
 export const approveSchema = {
   spender: SolidityType.ADDRESS,
   id: SolidityType.UINT,
-} satisfies SchemaType;
+} as const;
 
 export const approve = transition<ERC721State, typeof approveSchema>(
   approveSchema,
@@ -47,7 +47,7 @@ export const approve = transition<ERC721State, typeof approveSchema>(
 export const setApprovalForAllSchema = {
   operator: SolidityType.ADDRESS,
   approved: SolidityType.BOOL,
-} satisfies SchemaType;
+} as const;
 
 export const setApprovalForAll = transition<
   ERC721State,
@@ -78,7 +78,7 @@ export const transferFromSchema = {
   from: SolidityType.ADDRESS,
   to: SolidityType.ADDRESS,
   id: SolidityType.UINT,
-} satisfies SchemaType;
+} as const;
 
 export const transferFrom = transition<ERC721State, typeof transferFromSchema>(
   transferFromSchema,
@@ -112,7 +112,7 @@ export const transferFrom = transition<ERC721State, typeof transferFromSchema>(
 export const _mintSchema = {
   to: SolidityType.ADDRESS,
   id: SolidityType.UINT,
-} satisfies SchemaType;
+} as const;
 
 export const _mint = transition<ERC721State, typeof _mintSchema>(
   _mintSchema,
@@ -137,7 +137,7 @@ export const _mint = transition<ERC721State, typeof _mintSchema>(
 
 export const _burnSchema = {
   id: SolidityType.UINT,
-} satisfies SchemaType;
+} as const;
 
 export const _burn = transition<ERC721State, typeof _burnSchema>(
   _burnSchema,
