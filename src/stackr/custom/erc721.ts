@@ -1,7 +1,7 @@
 import { SolidityType, REQUIRE, State, SchemaType } from "@stackr/sdk/machine";
 import { ZeroAddress } from "ethers/constants";
 import { transition } from "./lib";
-import MerkleTree from "merkletreejs";
+import { MerkleTree } from "merkletreejs";
 import { solidityPackedKeccak256 } from "ethers";
 
 export type ERC721Storage = {
