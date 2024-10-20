@@ -16,7 +16,7 @@ export const mint = ERC721State.STF({
     id: SolidityType.UINT,
   },
   handler: (data) => {
-    if (data.msgSender !== "0x00") {
+    if (data.msgSender !== data.state.admin) {
       throw "NOT_AUTHORIZED";
     }
 

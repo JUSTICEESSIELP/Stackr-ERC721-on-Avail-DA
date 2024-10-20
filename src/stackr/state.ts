@@ -2,6 +2,7 @@ import { State } from "@stackr/sdk/machine";
 import { solidityPackedKeccak256 } from "ethers";
 
 type ERC721Storage = {
+  admin: string;
   name: string;
   symbol: string;
   ownerOf: Record<string, string>;
