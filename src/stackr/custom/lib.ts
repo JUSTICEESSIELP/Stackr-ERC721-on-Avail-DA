@@ -8,7 +8,7 @@ import {
   InferInputTypeFromSchemaType,
 } from "@stackr/sdk/machine";
 
-import { ERC721State } from "../state";
+import { ERC721State } from "./erc721";
 
 // NOTE: This is not exported from @stackr/sdk/machine for some reason
 export interface Args<WrappedState = unknown, InputType = AllowedInputTypes> {
@@ -36,4 +36,19 @@ export const call = <
 ) => {
   const { emit, msgSender, block } = source;
   return fn.handler({ emit, msgSender, block, signature: "", state, inputs });
+};
+
+// Makes it easier to create a transition on a type without class.STF
+export const transition = <MachineState, InputSchemaType extends SchemaType>(
+  schema: InputSchemaType,
+  handler: (
+    args: Args<
+      StateWrapType<MachineState>,
+      InputSchemaType extends SchemaType
+        ? InferInputTypeFromSchemaType<InputSchemaType>
+        : AllowedInputTypes
+    >
+  ) => StateWrapType<MachineState>
+): Transition<MachineState, InputSchemaType> => {
+  return { schema, handler };
 };

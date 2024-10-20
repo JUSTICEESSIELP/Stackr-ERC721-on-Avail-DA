@@ -1,19 +1,15 @@
 import { State } from "@stackr/sdk/machine";
 
 import { constructTree } from "./tree";
+import { ERC721Storage } from "./custom/erc721";
 
-export type ERC721Storage = {
+export type NFT = {
+  erc721: ERC721Storage;
   admin: string;
-  name: string;
-  symbol: string;
-  ownerOf: Record<string, string>;
-  balanceOf: Record<string, number>;
-  getApproved: Record<number, string>;
-  isApprovedForAll: Record<string, string[]>;
 };
 
-export class ERC721State extends State<ERC721Storage> {
-  constructor(state: ERC721Storage) {
+export class NFTState extends State<NFT> {
+  constructor(state: NFT) {
     super(state);
   }
 
