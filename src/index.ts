@@ -5,22 +5,19 @@ import { mru } from "./stackr/mru.ts";
 import { signMessage } from "./utils.ts";
 
 const main = async () => {
-  const inputs = {
-    timestamp: Date.now(),
-  };
+  const owner = new Wallet(process.env.PRIVATE_KEY as string);
+  const user = Wallet.createRandom();
 
-  // Create a random wallet
-  const wallet = Wallet.createRandom();
-
-  const name = "increment";
+  const inputs = { to: user.address, id: 1 };
+  const name = "mint";
   const domain = mru.config.domain;
   const types = mru.getStfSchemaMap()[name];
-  const signature = await signMessage(wallet, domain, types, { name, inputs });
+  const signature = await signMessage(owner, domain, types, { name, inputs });
   const incrementActionParams = {
     name,
     inputs,
     signature,
-    msgSender: wallet.address,
+    msgSender: owner.address,
   };
 
   const ack = await mru.submitAction(incrementActionParams);

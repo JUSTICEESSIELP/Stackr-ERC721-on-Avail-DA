@@ -23,9 +23,9 @@ const stackrConfig: StackrConfig = {
     ],
   },
   domain: {
-    name: "Stackr MVP v0",
+    name: "Generative NFT MRU",
     version: "1",
-    salt: "0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+    salt: "0x691ad008bcea736f03425604eb14d70cc4ff069fd8b1ba9aff00bb93d4b6d58f",
   },
   datastore: {
     type: "sqlite",

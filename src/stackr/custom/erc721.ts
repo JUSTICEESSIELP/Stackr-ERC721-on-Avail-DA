@@ -11,7 +11,10 @@ export const approve = ERC721State.STF({
   handler: ({ state, emit, inputs, msgSender }) => {
     const owner = state.ownerOf[inputs.id];
 
-    if (msgSender !== owner || !state.isApprovedForAll[owner]?.[msgSender]) {
+    if (
+      msgSender !== owner ||
+      !state.isApprovedForAll[owner]?.includes(msgSender)
+    ) {
       throw "NOT_AUTHORIZED";
     }
 
@@ -31,21 +34,25 @@ export const approve = ERC721State.STF({
 
 export const setApprovalForAll = ERC721State.STF({
   schema: {
-    oeprator: SolidityType.ADDRESS,
+    operator: SolidityType.ADDRESS,
     approved: SolidityType.BOOL,
   },
   handler: ({ state, emit, inputs, msgSender }) => {
-    if (!state.isApprovedForAll[msgSender]) {
-      state.isApprovedForAll[msgSender] = {};
+    const approved = new Set(state.isApprovedForAll[msgSender]);
+
+    if (inputs.approved) {
+      approved.add(inputs.operator);
+    } else {
+      approved.delete(inputs.operator);
     }
 
-    state.isApprovedForAll[msgSender][inputs.oeprator] = inputs.approved;
+    state.isApprovedForAll[msgSender] = [...approved];
 
     emit({
       name: "Approval",
       value: {
         owner: msgSender,
-        operator: inputs.oeprator,
+        operator: inputs.operator,
         approved: inputs.approved,
       },
     });
@@ -70,7 +77,7 @@ export const transferFrom = ERC721State.STF({
 
     if (
       msgSender !== inputs.from &&
-      !state.isApprovedForAll[inputs.from]?.[msgSender] &&
+      !state.isApprovedForAll[inputs.from]?.includes(msgSender) &&
       msgSender !== state.getApproved[inputs.id]
     ) {
       throw "NOT_AUTHORIZED";
@@ -98,7 +105,7 @@ export const _mint = ERC721State.STF({
     to: SolidityType.ADDRESS,
     id: SolidityType.UINT,
   },
-  handler: ({ state, emit, inputs, msgSender }) => {
+  handler: ({ state, emit, inputs }) => {
     if (inputs.to === ZeroAddress) {
       throw "INVALID_RECIPIENT";
     }
