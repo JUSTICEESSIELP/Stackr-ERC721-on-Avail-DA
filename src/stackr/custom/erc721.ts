@@ -1,4 +1,4 @@
-import { SolidityType } from "@stackr/sdk/machine";
+import { SolidityType, REQUIRE } from "@stackr/sdk/machine";
 import { ZeroAddress } from "ethers/constants";
 
 import { ERC721State } from "../state";
@@ -11,12 +11,10 @@ export const approve = ERC721State.STF({
   handler: ({ state, emit, inputs, msgSender }) => {
     const owner = state.ownerOf[inputs.id];
 
-    if (
-      msgSender !== owner ||
-      !state.isApprovedForAll[owner]?.includes(msgSender)
-    ) {
-      throw "NOT_AUTHORIZED";
-    }
+    REQUIRE(
+      msgSender === owner && state.isApprovedForAll[owner]?.includes(msgSender),
+      "NOT_AUTHORIZED"
+    );
 
     state.getApproved[inputs.id] = inputs.spender;
 
@@ -67,21 +65,14 @@ export const transferFrom = ERC721State.STF({
     id: SolidityType.UINT,
   },
   handler: ({ state, emit, inputs, msgSender }) => {
-    if (inputs.from !== state.ownerOf[inputs.id]) {
-      throw "WRONG_FROM";
-    }
-
-    if (inputs.to === ZeroAddress) {
-      throw "INVALID_RECIPIENT";
-    }
-
-    if (
-      msgSender !== inputs.from &&
-      !state.isApprovedForAll[inputs.from]?.includes(msgSender) &&
-      msgSender !== state.getApproved[inputs.id]
-    ) {
-      throw "NOT_AUTHORIZED";
-    }
+    REQUIRE(inputs.from === state.ownerOf[inputs.id], "WRONG_FROM");
+    REQUIRE(inputs.to !== ZeroAddress, "INVALID_RECIPIENT");
+    REQUIRE(
+      msgSender === inputs.from ||
+        state.isApprovedForAll[inputs.from]?.includes(msgSender) ||
+        msgSender === state.getApproved[inputs.id],
+      "NOT_AUTHORIZED"
+    );
 
     state.balanceOf[inputs.from]--;
     state.balanceOf[inputs.to] = (state.balanceOf[inputs.to] ?? 0) + 1;
@@ -106,13 +97,8 @@ export const _mint = ERC721State.STF({
     id: SolidityType.UINT,
   },
   handler: ({ state, emit, inputs }) => {
-    if (inputs.to === ZeroAddress) {
-      throw "INVALID_RECIPIENT";
-    }
-
-    if (state.ownerOf[inputs.id]) {
-      throw "ALREADY_MINTED";
-    }
+    REQUIRE(inputs.to !== ZeroAddress, "INVALID_RECIPIENT");
+    REQUIRE(!!state.ownerOf[inputs.id], "ALREADY_MINTED");
 
     state.balanceOf[inputs.to] = (state.balanceOf[inputs.to] ?? 0) + 1;
     state.ownerOf[inputs.id] = inputs.to;
@@ -136,9 +122,7 @@ export const _burn = ERC721State.STF({
   handler: ({ state, emit, inputs }) => {
     const owner = state.ownerOf[inputs.id];
 
-    if (owner === ZeroAddress) {
-      throw "NOT_MINTED";
-    }
+    REQUIRE(owner !== ZeroAddress, "NOT_MINTED");
 
     state.balanceOf[owner]--;
 

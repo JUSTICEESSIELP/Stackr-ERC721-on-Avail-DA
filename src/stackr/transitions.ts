@@ -1,4 +1,4 @@
-import { SolidityType, Transitions } from "@stackr/sdk/machine";
+import { SolidityType, Transitions, REQUIRE } from "@stackr/sdk/machine";
 
 import { ERC721State } from "./state";
 import {
@@ -16,10 +16,7 @@ export const mint = ERC721State.STF({
     id: SolidityType.UINT,
   },
   handler: (data) => {
-    if (data.msgSender !== data.state.admin) {
-      throw "NOT_AUTHORIZED";
-    }
-
+    REQUIRE(data.msgSender === data.state.admin, "NOT_AUTHORIZED");
     return _mint.handler(data);
   },
 });
@@ -33,9 +30,7 @@ export const burn = ERC721State.STF({
     const { inputs, msgSender } = data;
     const owner = state.ownerOf[inputs.id];
 
-    if (owner !== msgSender) {
-      throw "NOT_AUTHORIZED";
-    }
+    REQUIRE(owner === msgSender, "NOT_AUTHORIZED");
 
     return call(_burn, data, state, { id: inputs.id });
   },
