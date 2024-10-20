@@ -98,7 +98,7 @@ export const _mint = ERC721State.STF({
   },
   handler: ({ state, emit, inputs }) => {
     REQUIRE(inputs.to !== ZeroAddress, "INVALID_RECIPIENT");
-    REQUIRE(!!state.ownerOf[inputs.id], "ALREADY_MINTED");
+    REQUIRE(!state.ownerOf[inputs.id], "ALREADY_MINTED");
 
     state.balanceOf[inputs.to] = (state.balanceOf[inputs.to] ?? 0) + 1;
     state.ownerOf[inputs.id] = inputs.to;
