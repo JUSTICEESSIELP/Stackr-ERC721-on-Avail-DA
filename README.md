@@ -1,6 +1,7 @@
 # generative-nfts
 
 Project initialized using [@stackr/sdk](https://www.stackrlabs.xyz/)
+https://ethglobal.com/showcase/stackr-erc721-15c7x
 
 ## Project structure
 
